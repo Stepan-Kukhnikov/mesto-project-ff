@@ -1,6 +1,6 @@
 import './pages/index.css';
 import  { initialCards } from './scripts/cards.js'
-import { showPopup, closePopupByOverlay, closePopupByEscape } from './scripts/modal.js'
+import { showPopup, closePopupByClick, closePopupByEscape } from './scripts/modal.js'
 import { createCard, deleteCard, likeCard } from './scripts/card.js'
 
 const template = document.querySelector('#card-template').content;
@@ -16,67 +16,66 @@ const personDescription = document.querySelector('.popup__input_type_description
 const editButton = document.querySelector('.profile__edit-button')
 const addButton = document.querySelector('.profile__add-button')
 
-const addnewCardName =  document.querySelector('.popup__input_type_card-name')
+const addNewCardName =  document.querySelector('.popup__input_type_card-name')
 const addNewCardLink = document.querySelector('.popup__input_type_url')
 
 const popupImage = document.querySelector('.popup__image')
 const popupCaption = document.querySelector('.popup__caption')
 
 const newCardForm = document.forms['new-place']
+const editProfileForm = document.forms['edit-profile']
 
-const popupElement = document.querySelector('.popup')
-
-const contentAdd = document.querySelector('.popup_type_new-card')
-const contentEdit = document.querySelector('.popup_type_edit')
+const cardPopup = document.querySelector('.popup_type_new-card')
+const profilePopup = document.querySelector('.popup_type_edit')
 const popupTypeImage = document.querySelector('.popup_type_image')
 
 function renderCards(cardEl) {
     cardEl.forEach((element) => {
-        placesList.append(createCard(element.link, element.name, element.alternative, template, cardPopup, likeCard, deleteCard));
+        placesList.append(createCard(element.link, element.name, element.alternative, template, openCardPopup, likeCard, deleteCard));
     })
 }
 
-function cardPopup(link, text) {
+function openCardPopup(link, alternative, text) {
     popupImage.src = link
+    popupImage.alt = alternative
     popupCaption.textContent = text
     showPopup(popupTypeImage)
 }
 
-function personData(name, description) {
+function changePersonData(name, description) {
     personName.value = name.textContent;
     personDescription.value = description.textContent;
 }
 
-function clearCard() {
-    addnewCardName.value = '';
+function clearCardFormInputs() {
+    addNewCardName.value = '';
     addNewCardLink.value = '';
 }
 
 function addNewCard(element) {
     element.preventDefault()
-    placesList.prepend(createCard(addNewCardLink.value, addnewCardName.value, element.alternative, template, cardPopup, likeCard, deleteCard));
+    placesList.prepend(createCard(addNewCardLink.value, addNewCardName.value, element.alternative, template, openCardPopup, likeCard, deleteCard));
 }
 
-function handleFormSubmit(evt) {
+function handleProfileFormSubmit(evt) {
     evt.preventDefault(); 
 
     profileTitle.textContent = personName.value;
     profileDescription.textContent = personDescription.value
-    closePopupByOverlay
 }
 
-editButton.addEventListener('click', event =>  {showPopup(contentEdit), personData(profileTitle, profileDescription)})
-addButton.addEventListener('click', event => {showPopup(contentAdd), clearCard()})
+editButton.addEventListener('click', event =>  {showPopup(profilePopup), changePersonData(profileTitle, profileDescription)})
+addButton.addEventListener('click', event => {showPopup(cardPopup), clearCardFormInputs()}) 
+// В указаниях к проектной работе в пункте 4, после первого скриншота есть предложение:
+// "Если пользователь закрывает модальное окно нажав на крестик, то введённые значения не сохраняются."
+// Поэтому функцию очистки изменений в форме после ее закрытия я оставлю, так как этого требует задание.
 
-contentEdit.addEventListener('click', closePopupByOverlay)
-contentAdd.addEventListener('click', closePopupByOverlay)
+profilePopup.addEventListener('click', closePopupByClick)
+cardPopup.addEventListener('click', closePopupByClick)
 
-popupElement.addEventListener('keydown', closePopupByEscape)
-
-contentEdit.addEventListener('submit', handleFormSubmit);
+editProfileForm.addEventListener('submit', handleProfileFormSubmit);
 newCardForm.addEventListener('submit', addNewCard)
 
-popupTypeImage.addEventListener('click', closePopupByOverlay)
-
+popupTypeImage.addEventListener('click', closePopupByClick)
 
 renderCards(initialCards);
