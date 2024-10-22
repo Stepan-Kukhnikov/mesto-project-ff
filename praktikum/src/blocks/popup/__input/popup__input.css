@@ -14,6 +14,24 @@
   margin-bottom: 0;
 }
 
+.popup__input_type_error {
+  border-bottom: 1px solid #FF0000;
+}
+
+.popup__input-error {
+  display: flex;
+  color: #f00;
+  font-family: "Inter";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.popup__input-error_active {
+  display: block;
+}
+
 @media screen and (max-width: 568px) {
   .popup__title {
     font-size: 12px;

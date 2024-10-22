@@ -1,14 +1,16 @@
 import './pages/index.css';
-import  { initialCards } from './scripts/cards.js'
-import { showPopup, closePopupByClick, closePopupByEscape } from './scripts/modal.js'
+import { showPopup, closePopupByClick, closePopup } from './scripts/modal.js'
 import { createCard, deleteCard, likeCard } from './scripts/card.js'
+import { enableValidation, validationParams, clearValidation } from './scripts/validation.js'
+import { getAllInformation, updateUserInformation, pushNewCard, updateProfileAvatar } from './scripts/api.js';
 
-const template = document.querySelector('#card-template').content;
-
+let myId = "";
+const cardTemplate = document.querySelector('#card-template').content;
 const placesList = document.querySelector('.places__list');
 
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profilePhoto = document.querySelector('.profile__image')
 
 const personName = document.querySelector('.popup__input_type_name')
 const personDescription = document.querySelector('.popup__input_type_description')
@@ -26,25 +28,58 @@ const newCardForm = document.forms['new-place']
 const editProfileForm = document.forms['edit-profile']
 
 const cardPopup = document.querySelector('.popup_type_new-card')
+
+const profileImagePopup = document.querySelector('.popup_type_edit_card_img')
+const profileAvatarUrlField = document.querySelector('.popup__input_type_avatar-url')
+const profileAvatarForm = document.querySelector('.popup_type_edit_card_img .popup__form')
+
 const profilePopup = document.querySelector('.popup_type_edit')
 const popupTypeImage = document.querySelector('.popup_type_image')
 
+getAllInformation()
+    .then((res) => {
+        myId = res[0]._id
+        profileTitle.textContent = res[0].name;
+        profileDescription.textContent = res[0].about
+        profilePhoto.setAttribute("style", `background-image: url(${res[0].avatar})`)
+        renderCards(res[1])
+    }
+)
+
 function renderCards(cardEl) {
     cardEl.forEach((element) => {
-        placesList.append(createCard(element.link, element.name, element.alternative, template, openCardPopup, likeCard, deleteCard));
+        placesList.append(
+            createCard(
+                element.link, 
+                element.name, 
+                cardTemplate, 
+                openCardPopup, 
+                likeCard,
+                element.likes, 
+                element.owner._id,
+                element._id,
+                myId,
+                deleteCard,
+            ));
     })
 }
 
-function openCardPopup(link, alternative, text) {
+function openCardPopup(link, text) {
     popupImage.src = link
-    popupImage.alt = alternative
     popupCaption.textContent = text
     showPopup(popupTypeImage)
 }
 
-function changePersonData(name, description) {
-    personName.value = name.textContent;
-    personDescription.value = description.textContent;
+function changePersonData(evt) {
+    evt.preventDefault()
+    addSaveMessage(evt)
+    updateUserInformation(personName.value, personDescription.value)
+    .then(() => {
+        profileTitle.textContent = personName.value
+        profileDescription.textContent = personDescription.value
+        evt.target.reset()
+    })
+    .finally((res) => addSaveMessage(evt, true))
 }
 
 function clearCardFormInputs() {
@@ -52,30 +87,76 @@ function clearCardFormInputs() {
     addNewCardLink.value = '';
 }
 
-function addNewCard(element) {
-    element.preventDefault()
-    placesList.prepend(createCard(addNewCardLink.value, addNewCardName.value, element.alternative, template, openCardPopup, likeCard, deleteCard));
+function changeprofileAvatar(evt) {
+    evt.preventDefault()
+    addSaveMessage(evt)
+    updateProfileAvatar(profileAvatarUrlField.value)
+        .then((res) => {
+            profilePhoto.style = `background-image: url(${profileAvatarUrlField.value});`
+            profileAvatarForm.reset()
+            closePopup(profileImagePopup)
+        })
+        .finally((res) => addSaveMessage(evt, true));
 }
 
-function handleProfileFormSubmit(evt) {
-    evt.preventDefault(); 
-
-    profileTitle.textContent = personName.value;
-    profileDescription.textContent = personDescription.value
+function addNewCard(evt) {
+    evt.preventDefault()
+    const name = addNewCardName.value
+    const link = addNewCardLink.value
+    addSaveMessage(evt)
+    pushNewCard(name, link)
+        .then((id) => {
+            placesList.prepend(
+                createCard(
+                    link, 
+                    name,
+                    cardTemplate,
+                    openCardPopup, 
+                    likeCard,
+                    0,
+                    myId,
+                    id,
+                    myId,
+                    deleteCard
+                )
+            )
+        newCardForm.reset()
+        closePopup(profilePopup)
+    })
+    .finally((res) => addSaveMessage(evt, true));
+    
 }
 
-editButton.addEventListener('click', event =>  {showPopup(profilePopup), changePersonData(profileTitle, profileDescription)})
-addButton.addEventListener('click', event => {showPopup(cardPopup), clearCardFormInputs()}) 
-// В указаниях к проектной работе в пункте 4, после первого скриншота есть предложение:
-// "Если пользователь закрывает модальное окно нажав на крестик, то введённые значения не сохраняются."
-// Поэтому функцию очистки изменений в форме после ее закрытия я оставлю, так как этого требует задание.
+function addSaveMessage(event, loaded) {
+    const popupSaveButton = event.target.querySelector('.popup__button');
+    popupSaveButton.textContent = 'Сохранение...'
+    if (loaded) {
+        popupSaveButton.textContent = 'Сохранить'
+    }
+}
+
+editButton.addEventListener('click', event =>  {
+    personName.value = profileTitle.textContent
+    personDescription.value = profileDescription.textContent
+    showPopup(profilePopup);
+    clearValidation(profilePopup, validationParams)
+})
+
+addButton.addEventListener('click', event => {
+    clearCardFormInputs();
+    showPopup(cardPopup);
+    clearValidation(cardPopup, validationParams)
+})
 
 profilePopup.addEventListener('click', closePopupByClick)
+editProfileForm.addEventListener('submit', changePersonData)
 cardPopup.addEventListener('click', closePopupByClick)
+profilePhoto.addEventListener('click', (event) => {showPopup(profileImagePopup)})
+profileImagePopup.addEventListener('click', closePopupByClick)
+profileImagePopup.addEventListener('submit', changeprofileAvatar)
 
-editProfileForm.addEventListener('submit', handleProfileFormSubmit);
 newCardForm.addEventListener('submit', addNewCard)
 
 popupTypeImage.addEventListener('click', closePopupByClick)
 
-renderCards(initialCards);
+enableValidation(validationParams);
