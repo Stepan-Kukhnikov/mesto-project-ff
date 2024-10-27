@@ -2,7 +2,7 @@ import { deleteCardcontent, pushLike, deleteLike } from './api'
 
 function createCard(
     cardLink, 
-    cardName, 
+    cardName,
     cardTemplate, 
     openCardPopup, 
     likeCard,
@@ -21,6 +21,7 @@ function createCard(
 
     cardItem.id = cardId;
     cardImage.src = cardLink;
+    cardImage.alt = cardName;
     cardtext.textContent = cardName;
     likeCounter.textContent = likes.length;
 

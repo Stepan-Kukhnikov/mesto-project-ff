@@ -45,13 +45,14 @@ getAllInformation()
         renderCards(res[1])
     }
 )
+.catch((err) => console.log(`Произошла ошибка ${err}`))
 
 function renderCards(cardEl) {
     cardEl.forEach((element) => {
         placesList.append(
             createCard(
                 element.link, 
-                element.name, 
+                element.name,
                 cardTemplate, 
                 openCardPopup, 
                 likeCard,
@@ -67,6 +68,7 @@ function renderCards(cardEl) {
 function openCardPopup(link, text) {
     popupImage.src = link
     popupCaption.textContent = text
+    popupImage.alt = text
     showPopup(popupTypeImage)
 }
 
@@ -78,7 +80,9 @@ function changePersonData(evt) {
         profileTitle.textContent = personName.value
         profileDescription.textContent = personDescription.value
         evt.target.reset()
+        closePopup(profilePopup)
     })
+    .catch((err) => console.log(`Произошла ошибка ${err}`))
     .finally((res) => addSaveMessage(evt, true))
 }
 
@@ -87,7 +91,7 @@ function clearCardFormInputs() {
     addNewCardLink.value = '';
 }
 
-function changeprofileAvatar(evt) {
+function changeProfileAvatar(evt) {
     evt.preventDefault()
     addSaveMessage(evt)
     updateProfileAvatar(profileAvatarUrlField.value)
@@ -96,6 +100,7 @@ function changeprofileAvatar(evt) {
             profileAvatarForm.reset()
             closePopup(profileImagePopup)
         })
+        .catch((err) => console.log(`Произошла ошибка ${err}`))
         .finally((res) => addSaveMessage(evt, true));
 }
 
@@ -121,18 +126,20 @@ function addNewCard(evt) {
                 )
             )
         newCardForm.reset()
-        closePopup(profilePopup)
+        closePopup(cardPopup)
     })
+    .catch((err) => console.log(`Произошла ошибка ${err}`))
     .finally((res) => addSaveMessage(evt, true));
     
 }
 
 function addSaveMessage(event, loaded) {
     const popupSaveButton = event.target.querySelector('.popup__button');
-    popupSaveButton.textContent = 'Сохранение...'
     if (loaded) {
         popupSaveButton.textContent = 'Сохранить'
-    }
+    } else {
+        popupSaveButton.textContent = 'Сохранение...'
+    } 
 }
 
 editButton.addEventListener('click', event =>  {
@@ -143,7 +150,7 @@ editButton.addEventListener('click', event =>  {
 })
 
 addButton.addEventListener('click', event => {
-    clearCardFormInputs();
+    newCardForm.reset()
     showPopup(cardPopup);
     clearValidation(cardPopup, validationParams)
 })
@@ -153,7 +160,7 @@ editProfileForm.addEventListener('submit', changePersonData)
 cardPopup.addEventListener('click', closePopupByClick)
 profilePhoto.addEventListener('click', (event) => {showPopup(profileImagePopup)})
 profileImagePopup.addEventListener('click', closePopupByClick)
-profileImagePopup.addEventListener('submit', changeprofileAvatar)
+profileImagePopup.addEventListener('submit', changeProfileAvatar)
 
 newCardForm.addEventListener('submit', addNewCard)
 

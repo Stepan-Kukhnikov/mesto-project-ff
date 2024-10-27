@@ -1,5 +1,3 @@
-export { validationParams, enableValidation, clearValidation }
-
 const validationParams = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
@@ -82,18 +80,16 @@ function enableValidation(validationSettings) {
   });
 };
 
-function clearValidation(profileForm, validationConfig) {
-  Array.from(profileForm.querySelectorAll(validationConfig.inputSelector)).forEach(el => {
-    const errorElement = profileForm.querySelector(`.${el.id}-error`);
-    el.classList.remove(validationConfig.inputErrorClass);
-    el.setCustomValidity('')
-    el.textContent = '';
-    errorElement.classList.remove(validationConfig.errorClass);
-    errorElement.textContent = '';
+function clearValidation(formElement, validationConfig) {
+  const inputFields = Array.from(formElement.querySelectorAll(validationConfig.inputSelector))
+  inputFields.forEach(el => {
+    hideInputError(formElement, el, validationConfig)
     toggleButtonState(
-      Array.from(profileForm.querySelectorAll(validationConfig.inputSelector)), 
-      profileForm.querySelector(validationConfig.submitButtonSelector), 
+      inputFields, 
+      formElement.querySelector(validationConfig.submitButtonSelector), 
       validationConfig.inactiveButtonClass
     )
   })
 }
+
+export { validationParams, enableValidation, clearValidation }
