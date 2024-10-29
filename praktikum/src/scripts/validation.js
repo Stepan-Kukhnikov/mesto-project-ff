@@ -82,14 +82,15 @@ function enableValidation(validationSettings) {
 
 function clearValidation(formElement, validationConfig) {
   const inputFields = Array.from(formElement.querySelectorAll(validationConfig.inputSelector))
-  inputFields.forEach(el => {
-    hideInputError(formElement, el, validationConfig)
-    toggleButtonState(
-      inputFields, 
-      formElement.querySelector(validationConfig.submitButtonSelector), 
-      validationConfig.inactiveButtonClass
-    )
-  })
+  toggleButtonState(
+    inputFields,
+    formElement.querySelector(validationConfig.submitButtonSelector),
+    validationConfig.inactiveButtonClass
+  );
+  
+  inputFields.forEach((el) => {
+    hideInputError(formElement, el, validationConfig);
+  });
 }
 
 export { validationParams, enableValidation, clearValidation }

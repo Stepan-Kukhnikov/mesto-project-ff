@@ -26,6 +26,7 @@ const popupCaption = document.querySelector('.popup__caption')
 
 const newCardForm = document.forms['new-place']
 const editProfileForm = document.forms['edit-profile']
+const editProfilePhoto = document.forms['new-avatar']
 
 const cardPopup = document.querySelector('.popup_type_new-card')
 
@@ -84,11 +85,6 @@ function changePersonData(evt) {
     })
     .catch((err) => console.log(`Произошла ошибка ${err}`))
     .finally((res) => addSaveMessage(evt, true))
-}
-
-function clearCardFormInputs() {
-    addNewCardName.value = '';
-    addNewCardLink.value = '';
 }
 
 function changeProfileAvatar(evt) {
@@ -158,7 +154,11 @@ addButton.addEventListener('click', event => {
 profilePopup.addEventListener('click', closePopupByClick)
 editProfileForm.addEventListener('submit', changePersonData)
 cardPopup.addEventListener('click', closePopupByClick)
-profilePhoto.addEventListener('click', (event) => {showPopup(profileImagePopup)})
+profilePhoto.addEventListener('click', event => {
+    editProfilePhoto.reset()
+    showPopup(profileImagePopup) 
+    clearValidation(profileImagePopup, validationParams)
+})
 profileImagePopup.addEventListener('click', closePopupByClick)
 profileImagePopup.addEventListener('submit', changeProfileAvatar)
 

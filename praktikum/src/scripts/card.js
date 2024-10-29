@@ -44,6 +44,7 @@ function createCard(
         .then((res) => {
             deleteCard(cardItem)
         })
+        .catch((err) => console.log(`Произошла ошибка ${err}`))
     });
     
     cardImage.addEventListener('click', event => {openCardPopup(cardLink, cardName)});
@@ -64,12 +65,14 @@ function likeCard(event) {
             event.target.closest('.card__like-section').querySelector('.card__like-counter').textContent = res.likes.length
             event.target.classList.remove('card__like-button_is-active')
         })
+        .catch((err) => console.log(`Произошла ошибка ${err}`))
     } else {
         pushLike(likeTarget)
         .then((res) => {
             event.target.closest('.card__like-section').querySelector('.card__like-counter').textContent = res.likes.length
             event.target.classList.add('card__like-button_is-active')
         })
+        .catch((err) => console.log(`Произошла ошибка ${err}`))
     }
 }
 

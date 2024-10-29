@@ -23,6 +23,7 @@ const getUserInformation = () => {
       }
       })
       .then(checkResponse)
+      .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
   
 const getInitialCards = () => {
@@ -32,6 +33,7 @@ const getInitialCards = () => {
       }
     })
     .then(checkResponse)
+    .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const updateUserInformation = (inputName, inputAbout) => {
@@ -39,7 +41,7 @@ const updateUserInformation = (inputName, inputAbout) => {
     method: 'PATCH',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
     body: JSON.stringify({
       name: inputName,
@@ -47,6 +49,7 @@ const updateUserInformation = (inputName, inputAbout) => {
     })
   }) 
   .then(checkResponse)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const pushNewCard = (cardName, cardLink) => {
@@ -54,7 +57,7 @@ const pushNewCard = (cardName, cardLink) => {
     method: 'POST',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
     body: JSON.stringify({
       name: cardName,
@@ -63,6 +66,7 @@ const pushNewCard = (cardName, cardLink) => {
   }) 
   .then(checkResponse)
   .then((res) => res._id)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const pushLike = (id) => {
@@ -70,10 +74,11 @@ const pushLike = (id) => {
     method: 'PUT',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
   }) 
   .then(checkResponse)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const deleteLike = (id) => {
@@ -81,10 +86,11 @@ const deleteLike = (id) => {
     method: 'DELETE',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
   }) 
   .then(checkResponse)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const deleteCardcontent = (id) => {
@@ -92,10 +98,11 @@ const deleteCardcontent = (id) => {
     method: 'DELETE',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
   }) 
   .then(checkResponse)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const updateProfileAvatar = (link) => {
@@ -103,13 +110,14 @@ const updateProfileAvatar = (link) => {
     method: 'PATCH',
     headers: {
       authorization: config.headers.authorization,
-      'Content-Type': config.headers['Content-Type']
+      headers: config.headers,
     },
     body: JSON.stringify({
       avatar: link
     })
   }) 
   .then(checkResponse)
+  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const getAllInformation = () => Promise.all([getUserInformation(), getInitialCards()])
