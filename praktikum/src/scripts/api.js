@@ -18,47 +18,34 @@ function checkResponse(res) {
 
 const getUserInformation = () => {
     return fetch(`${config.baseUrl}/users/me`, {
-      headers: {
-        authorization: config.headers.authorization
-      }
+      headers: config.headers,
       })
       .then(checkResponse)
-      .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
   
 const getInitialCards = () => {
     return fetch(`${config.baseUrl}/cards`, {
-      headers: {
-        authorization: config.headers.authorization
-      }
+      headers: config.headers,
     })
     .then(checkResponse)
-    .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const updateUserInformation = (inputName, inputAbout) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: inputName,
       about: inputAbout
     })
   }) 
   .then(checkResponse)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const pushNewCard = (cardName, cardLink) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
     body: JSON.stringify({
       name: cardName,
       link: cardLink
@@ -66,58 +53,41 @@ const pushNewCard = (cardName, cardLink) => {
   }) 
   .then(checkResponse)
   .then((res) => res._id)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const pushLike = (id) => {
   return fetch(`${config.baseUrl}/cards/likes/${id}`, {
     method: 'PUT',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
   }) 
   .then(checkResponse)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const deleteLike = (id) => {
   return fetch(`${config.baseUrl}/cards/likes/${id}`, {
     method: 'DELETE',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
   }) 
   .then(checkResponse)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const deleteCardcontent = (id) => {
   return fetch(`${config.baseUrl}/cards/${id}`, {
     method: 'DELETE',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
   }) 
   .then(checkResponse)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const updateProfileAvatar = (link) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
-    headers: {
-      authorization: config.headers.authorization,
-      headers: config.headers,
-    },
+    headers: config.headers,
     body: JSON.stringify({
       avatar: link
     })
   }) 
   .then(checkResponse)
-  .catch((err) => console.log(`Произошла ошибка ${err}`))
 }
 
 const getAllInformation = () => Promise.all([getUserInformation(), getInitialCards()])
